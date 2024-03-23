@@ -6,6 +6,7 @@ let kBitArraySize = 215601;
 let kHashCount = 4;
 let kAddedHashWord = "A"
 let kMissingHashWord = "AB"
+let kTestFile = 'src/resources/dict.txt'
 
 test('test getSize', () => {
     expect(Bloom.getSize(kTestSize, kTestFPProbability)).toBe(kBitArraySize);
@@ -18,6 +19,12 @@ test('test getSize', () => {
   test('test add and isSet', () => {
     let theBloom=new Bloom(kTestSize, kTestFPProbability);
     theBloom.add(kAddedHashWord);
+    expect(theBloom.isSet(kAddedHashWord)).toBe(true);
+    expect(theBloom.isSet(kMissingHashWord)).toBe(false);
+  });
+
+  test('test initialization by file', () => {
+    let theBloom=new Bloom(kTestFile, kTestFPProbability);
     expect(theBloom.isSet(kAddedHashWord)).toBe(true);
     expect(theBloom.isSet(kMissingHashWord)).toBe(false);
   });
