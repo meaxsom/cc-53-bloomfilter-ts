@@ -1,0 +1,33 @@
+{
+  "name": "bloom-filter",
+  "version": "0.0.1",
+  "description": "coding challenge #53 for bloom filter using TypeScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
+  },
+  "author": "Matthew E. Axsom (github@matthewaxsom.net)",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "log4js": "^6.9.1",
+    "murmurhash": "^2.0.1",
+    "typescript-algorithms-and-datastructures": "^0.0.7"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "ts-jest": "^29.1.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+      "node_modules/variables/.+\\.(j|t)sx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!variables/.*)"
+    ]
+  }
+}
