@@ -8,8 +8,8 @@ export default function helloWorld(inMessage = "Hello World!") {
 }
 
 log4js.configure({
-    appenders: { hello: { type: "file", filename: "logs/hello-world.log" } },
-    categories: { default: { appenders: ["hello"], level: "debug" } },
+    appenders: { fileAppender: { type: "file", filename: "logs/hello-world.log" } },
+    categories: { default: { appenders: ["fileAppender"], level: "debug" } },
   });
 
   const logger = log4js.getLogger();
