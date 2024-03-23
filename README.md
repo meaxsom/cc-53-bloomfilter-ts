@@ -55,6 +55,12 @@ A `Bloom` object in TypeScript where we'll start for our TDD
 - Ended up using [TypeScript-Algorithms-and-Data-Structures](https://github.com/sularome/TypeScript-Algorithms-and-Data-Structures) to hold the bitarray vs writing one myself
 - And [murmurhash](https://github.com/perezd/node-murmurhash) for the hash algo, since it was recomended in a chat I had with [Phind](https://www.phind.com)
 
+## Step 2
+
+Bummer that Typescript doesn't allow an easy way to overload a constructor directly. Use the `any` approach and have 2 different initializations methods. This meant that my Bloom bit array couldn't be initialized until I read the file, which meant that typescript couldn't see the `BitArray` being initialized. Solved is using the [Definite Assignment Operator `!`](https://blake-wood-bst.medium.com/typescript-definite-assignment-operator-2ae02506c783)
+
+I'll have to figure out how to handle opening the saved bloom file when I get to it
+
 
 ## Resources
 - [How to Setup a TypeScript + Node.js Project](https://khalilstemmler.com/blogs/typescript/node-starter-project/)
