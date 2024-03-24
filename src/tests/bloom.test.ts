@@ -1,7 +1,7 @@
 import  Bloom from "../bloom";
 
 let kTestSize = 34578;
-let kTestFPProbability = 0.39;
+let kTestFPProbability = 0.05;
 let kBitArraySize = 215601;
 let kHashCount = 4;
 let kAddedHashWord = "A"
