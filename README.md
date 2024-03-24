@@ -74,6 +74,32 @@ Supposed to be a binary file of our own format. Needs:
 - Created a "BufferBuilder" class to take care of generating buffers and writing out the data. Used "builder" pattern.
     - the size of the output file is actually "larger" than the input file. By shrinking the probability factor the bloom file gets smaller.
 
+## Step 4
+
+> load the Bloom filter from disk. You’ll need to read the header - you should validate the file is of the type and version expected.
+
+- had to understand how the BitArray `getIndexes()` worked. Returns an array of UIn32 numbers where each element in the array is a bit that is "on". So, when reading back in, needed to read each one and repopulate the BitArray bit-number by bit-number.
+    - would be nice to have a serialize, unserialize to just pass in/out the internal datastructure as a `Buffer`
+
+## Step 5
+
+> test words provided on the command line to see if they’re probably spelt right
+
+Did this as a part of step-4 branch since it was relatively minor
+
+## Summary
+
+- I understand Bloom Filters much better!
+- TypeScript isn't bad
+    - feels a lot like C/Java.. I had no problem with the "typing". It's one of the things I miss in most scripting languages
+    - but I forgot to compile before running sometimes
+    - Build and testing process can get a bit awkward, but it may be that I don't have the tool chain quite right yet
+    - wish Gradle worked with npm .. may have to try [this](https://github.com/gradlets/gradle-typescript) next time
+- The BitArray class I leveraged needs serialization support vs writing out all the bits that were set as UInt32s. I could have done something with that but that wasn't the point of the exercise.
+- The logging system felt a lot like Log4J and would probably use again
+- Continue to love the Commander command line processor. Feels like Python's implementation. Would be nice to have a Java version like that instead of using `GetArgs`. I'll have to look for one.
+- Phind got me through a lof of implmentation questions regarding Typescript. Much better than hunting through StackOverflow/Blog posts.
+
 
 ## Resources
 - [How to Setup a TypeScript + Node.js Project](https://khalilstemmler.com/blogs/typescript/node-starter-project/)
