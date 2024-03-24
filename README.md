@@ -61,6 +61,19 @@ Bummer that Typescript doesn't allow an easy way to overload a constructor direc
 
 I'll have to figure out how to handle opening the saved bloom file when I get to it
 
+## Step 3
+
+> save the Bloom filter to disk
+
+Supposed to be a binary file of our own format. Needs:
+    - some sort of header identifier
+    - the number of hashs used
+    - the size of the bit array
+    - the count and possibly the percentage (although after initialization those are not really needed)
+
+- Created a "BufferBuilder" class to take care of generating buffers and writing out the data. Used "builder" pattern.
+    - the size of the output file is actually "larger" than the input file. By shrinking the probability factor the bloom file gets smaller.
+
 
 ## Resources
 - [How to Setup a TypeScript + Node.js Project](https://khalilstemmler.com/blogs/typescript/node-starter-project/)
