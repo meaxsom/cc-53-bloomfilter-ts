@@ -4,6 +4,8 @@ import * as log4js from "log4js";
 
 import { BitArray } from "typescript-algorithms-and-datastructures";
 
+import BufferBuilder from './bufferBuilder';
+
 // a class for a bloom filter
 export default class Bloom {
     private static kLogger = log4js.getLogger();
@@ -120,6 +122,32 @@ export default class Bloom {
                 break;
             }
         }
+        return result;
+    }
+
+    public writeFilter(inOutFileName: string) : boolean {
+        var result : boolean = false;
+
+        try {
+            let theIndexes = this.m_bitArray.getIndexes();
+
+            let theBuilder = new BufferBuilder();
+            let theBufferData = theBuilder.add('CCBF')
+                .addAsInt(this.m_count)
+                .addAsFloat(this.m_FPProbability)
+                .addAsInt(this.m_hashCount)
+                .addAsInt(this.m_size)
+                .addAsInt(theIndexes.length)
+                .addAsInts(theIndexes)
+                .build();
+
+            fs.writeFileSync(inOutFileName, theBufferData);
+            result=true;
+            
+        } catch (theErr) {
+            Bloom.kLogger.error(theErr);
+        }
+
         return result;
     }
 }
