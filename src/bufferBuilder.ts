@@ -18,16 +18,16 @@ export default class BufferBuilder {
         return this;
     }
 
-    public addAsInt(inValue: number) : BufferBuilder{
+    public addAsUInt(inValue: number) : BufferBuilder{
         let theBuffer = Buffer.alloc(BufferBuilder.kNumberSize);
-        theBuffer.writeInt32BE(inValue);
+        theBuffer.writeUInt32BE(inValue);
         this.m_buffers.push(theBuffer);
         return this;
     }
 
-    public addAsInts(inValues: number[]) : BufferBuilder {
+    public addAsUInts(inValues: number[]) : BufferBuilder {
         for (var i=0; i<inValues.length; i++)
-            this.addAsInt(inValues[i]);
+            this.addAsUInt(inValues[i]);
 
         return this;
     }
