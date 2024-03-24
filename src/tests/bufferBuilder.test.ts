@@ -10,7 +10,7 @@ test('test add(string)', () => {
   });
 
   test('test addAsInt(number)', () => {
-    let theBuffer = new BufferBuilder().addAsInt(kTestIntNumber).build()
+    let theBuffer = new BufferBuilder().addAsUInt(kTestIntNumber).build()
     expect(theBuffer.readInt32BE()).toBe(kTestIntNumber);
   });
 
