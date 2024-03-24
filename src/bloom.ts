@@ -11,6 +11,9 @@ export default class Bloom {
     private static kLogger = log4js.getLogger();
     private static kDefaultSize = 100;
 
+    private static kFileHeader = 'CCBF';
+    private static kFileVersion = 1;
+
     private m_count : number = 0;
     private m_FPProbability : number = 0.0
     private m_size: number = 0;
@@ -38,7 +41,8 @@ export default class Bloom {
 
     private intialize(inCount: number, inFPProbability: number) {
         this.m_count = inCount;
-        this.m_FPProbability=inFPProbability;
+        // fix this at 2 decimal points
+        this.m_FPProbability=Number(inFPProbability.toFixed(2)); 
         this.m_size=this.getSize()
         this.m_hashCount = this.getHashCount();
         
@@ -79,7 +83,7 @@ export default class Bloom {
         m = -(inCount * lg(inFPProbability)) / (lg(2)^2) 
     See: https://en.wikipedia.org/wiki/Bloom_filter
     */
-    static getSize(inCount: number, inFPProbability: number): number {
+    public static getSize(inCount: number, inFPProbability: number): number {
         let result = -(inCount * Math.log(inFPProbability))/(Math.log(2) ** 2)
         return Math.trunc(result); // it's BS that TypeScript doesn't support int vs float!!
     }
@@ -93,7 +97,7 @@ export default class Bloom {
     Return the hash function(k) to be used using the following:
         k = (inBitArraySize/inItemCount) * lg(2)   
     */
-    static getHashCount(inBitArraySize: number, inItemCount: number): number {
+    public static getHashCount(inBitArraySize: number, inItemCount: number): number {
         let result = (inBitArraySize/inItemCount) * Math.log(2);
         return Math.trunc(result);
     }
@@ -129,25 +133,71 @@ export default class Bloom {
         var result : boolean = false;
 
         try {
+            // this is an array of numbers (UInt32) where each element is the bit position that is set
             let theIndexes = this.m_bitArray.getIndexes();
 
             let theBuilder = new BufferBuilder();
-            let theBufferData = theBuilder.add('CCBF')
-                .addAsInt(this.m_count)
+            let theBufferData = theBuilder.add(Bloom.kFileHeader)
+                .addAsUInt(Bloom.kFileVersion)
+                .addAsUInt(this.m_count)
                 .addAsFloat(this.m_FPProbability)
-                .addAsInt(this.m_hashCount)
-                .addAsInt(this.m_size)
-                .addAsInt(theIndexes.length)
-                .addAsInts(theIndexes)
+                .addAsUInt(this.m_hashCount)
+                .addAsUInt(this.m_size)
+                .addAsUInt(theIndexes.length)
+                .addAsUInts(theIndexes)
                 .build();
 
             fs.writeFileSync(inOutFileName, theBufferData);
+            
             result=true;
             
         } catch (theErr) {
             Bloom.kLogger.error(theErr);
         }
 
+        return result;
+    }
+
+    // read the bloom filte file and repopulate the bitarray
+    // return the filled out bloom object
+    public static readFilter(inFileName: string) : Bloom {
+        var result! : Bloom;
+
+        try {
+            const theBuffer = fs.readFileSync(inFileName);
+
+
+            // should be our header string
+            let theSignature = theBuffer.toString('utf-8', 0, 4);
+            let theVersion = theBuffer.readUInt32BE(4);
+
+            // make sure this is our type of file
+            if (Bloom.kFileHeader == theSignature && Bloom.kFileVersion == theVersion) {
+                let theCount = theBuffer.readUInt32BE(8);
+
+                // fix at 2 decimal.. hopefully we won't have lost much
+                let thePercent = Number(theBuffer.readFloatBE(12).toFixed(2));
+
+                result = new Bloom(theCount, thePercent);
+
+                let theHashCount = theBuffer.readUInt32BE(16);
+                let theSize = theBuffer.readUInt32BE(20);
+                let theSetBitsCount = theBuffer.readUInt32BE(24);
+
+                // determine if the filter has been reconstituted correctly...
+                if (result.m_size == theSize && result.m_hashCount == theHashCount) {
+                    // theSetBitsCount is the number of bits that are set in the bit array
+                    // the subsequent values in the buffer are UInt32 numbers representing the bit positions that were set in the filter
+                    let theByteCount = theSetBitsCount * 4;
+                    for (var i=28; i < theByteCount; i+=4) {
+                        let theSetBitNumber = theBuffer.readUInt32BE(i);
+                        result.m_bitArray.set(theSetBitNumber, true);
+                    }
+                }
+            }
+        } catch(theErr) {
+            this.kLogger.error(theErr);
+        }
         return result;
     }
 }

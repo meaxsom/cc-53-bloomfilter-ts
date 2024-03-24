@@ -35,3 +35,10 @@ test('test getSize', () => {
     expect(theBloom.writeFilter(kTestOutputFile)).toBe(true);
   });
 
+  test ('test reading bloom data from file', () => {
+    let theBloom=Bloom.readFilter(kTestOutputFile);
+    expect(theBloom.isSet(kAddedHashWord)).toBe(true);
+    expect(theBloom.isSet(kMissingHashWord)).toBe(false);
+  });
+
+
